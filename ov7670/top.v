@@ -8,7 +8,7 @@ module top(output LED_R, output LED_G, output LED_B, output IOT_51A, output IOT_
             input SPI_SCK, input SPI_SS, input SPI_MOSI, output SPI_MISO);
    wire clk_48mhz; //internal
    wire clk_24mhz; //clk for the camera
-   wire clk_40khz;
+   wire clk_90khz;
 
    wire SIOC;
    wire SIOD_send;
@@ -90,7 +90,7 @@ module top(output LED_R, output LED_G, output LED_B, output IOT_51A, output IOT_
    wire ov7670_capture_busy; //module currently capturing image
    ov7670_controller ov7670_controller_inst(.main_clk(clk_24mhz), .PCLK(PCLK), .CAM_DATA_IN(CAM_PIXEL_DATA), .HREF(HREF), .VSYNC(VSYNC), .CAM_RESET(cam_reset),
                           .new_img(ov7670_new_image), .valid_data(ov7670_valid_data), .data_out(ov7670_data_out),
-                          .sccb_clk(clk_40khz), .SIOC(SIOC), .SIOD(SIOD_send),
+                          .sccb_clk(clk_90khz), .SIOC(SIOC), .SIOD(SIOD_send),
                           .reg_address(ov7670_reg_address), .reg_write(ov7670_reg_write_en), .reg_data_in(ov7670_reg_data_in), .reg_data_out(ov7670_reg_data_out), .capture_busy(ov7670_capture_busy));
 
    reg [16:0] ram_address;
@@ -113,7 +113,7 @@ module top(output LED_R, output LED_G, output LED_B, output IOT_51A, output IOT_
    assign LED_B = ~led[2];
 
    assign clk_24mhz = counter_clk_48mhz[0]; //divides by 2
-   assign clk_40khz = counter_clk_48mhz[8];
+   assign clk_90khz = counter_clk_48mhz[8];
 
    //internal oscillators seen as modules
    SB_HFOSC SB_HFOSC_inst(

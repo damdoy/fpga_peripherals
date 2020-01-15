@@ -1,0 +1,7 @@
+*.asc
+*.bin
+*.blif
+*.json
+host
+*.dat
+*.ppm
