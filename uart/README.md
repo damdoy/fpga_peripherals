@@ -4,6 +4,8 @@ Simple implementation of UART on the iCE40 Ultraplus.
 
 The fpga will send a byte a few time per second. Aditionaly, to demonstrate interactivity an echo is implemented where every bytes received by the fpga will be sent back.
 
+The Uart module can be parametered for a specific uart frequency, it contains buffer that will store bytes to send or receive while waiting for their processing.
+
 ## How to build and run
 
 Generate the bitstream for the fpga using `make`, program the fpga with `make prog`.

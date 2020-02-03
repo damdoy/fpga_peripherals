@@ -1,6 +1,14 @@
 //todo parameters for clk calculation and fifo sizes
-module uart(input clk_main, output tx_free, input [7:0] tx_data, input tx_data_valid, output rx_available, output reg[7:0] rx_data, input rx_data_ack,
-           output clk_uart_out, output reg uart_tx, input uart_rx);
+module uart(input clk_main, //clk of the system, should be larger than the target uart clk
+            output tx_free, //indicates if there is space in the buffer to send uart byte
+            input [7:0] tx_data, //data to send to uart
+            input tx_data_valid, //assert the data to write
+            output rx_available, //indicates that a byte was received and is in the buffer
+            output reg[7:0] rx_data, //oldest non acknowledged received byte
+            input rx_data_ack, //acknowledge the received byte, rx_data will contain the next one (or nothing if rx_available==0)
+            output clk_uart_out, //clk for the uart tx, if needed for synchronous uart
+            output reg uart_tx, //uart tx line
+            input uart_rx); //uart rx line
    parameter FREQ_MAIN_HZ = 12000000;
    parameter FREQ_TARGET_UART_HZ = 9600;
    //amount of main clk before flipping the uart clk
@@ -24,7 +32,7 @@ module uart(input clk_main, output tx_free, input [7:0] tx_data, input tx_data_v
    reg [4:0] counter_uart_rx;
 
    reg clk_uart_tx;
-   reg clk_uart_rx;
+   assign clk_uart_out = clk_uart_tx;
 
    //leave a 1-element margin of error just in case
    assign tx_free = (fifo_uart_tx_head_write != (fifo_uart_tx_head_read-2) );
@@ -48,7 +56,6 @@ module uart(input clk_main, output tx_free, input [7:0] tx_data, input tx_data_v
       counter_uart_rx = 0;
 
       clk_uart_tx = 0;
-      clk_uart_rx = 0;
    end
 
    always @(posedge clk_main)
