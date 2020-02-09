@@ -185,9 +185,8 @@ int spi_init()
 
    //divides by value+1
 	send_byte(MC_SET_CLK_DIV);
-	send_byte(0);
-	send_byte(0x01);
-   //so, 6/2 MHz ==> 3MHz
+	send_byte(0x00); //6MHz
+	send_byte(0x00);
 
 	usleep(100);
 
