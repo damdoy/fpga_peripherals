@@ -6,6 +6,8 @@ module top(output IOT_39A, output IOT_38B, output IOT_43A, output IOT_42B, outpu
    //this include has its own init block, that's why it is here
    `include "screen_constant.v"
 
+   parameter NB_COLUMNS = 84;
+
    wire clk_48mhz;
    wire clk_24mhz;
    reg clk_div;
@@ -35,7 +37,9 @@ module top(output IOT_39A, output IOT_38B, output IOT_43A, output IOT_42B, outpu
 
    reg [2:0] led;
 
-   reg [27:0] counter_start; //to put screen in reset for a while
+   reg [19:0] counter_start; //to put screen in reset for a while
+   reg [23:0] counter_redraw;
+   reg [6:0] shift_value; //will slowly shift what is written on the screen
 
    assign LED_R = ~led[0];
    assign LED_G = ~led[1];
@@ -60,6 +64,9 @@ module top(output IOT_39A, output IOT_38B, output IOT_43A, output IOT_42B, outpu
 
       led = 0;
       counter_start = 0;
+      counter_redraw = 0;
+      shift_value = 0;
+      address_to_draw = 0;
 
       screen_controller_address = 0;
       screen_controller_data = 0;
@@ -77,18 +84,24 @@ module top(output IOT_39A, output IOT_38B, output IOT_43A, output IOT_42B, outpu
       screen_controller_address <= 0;
       screen_controller_wr_en <= 0;
 
-      if(counter_start < 28'h4000000) begin //screen in reset mode
-         counter_start <= counter_start+1;
-         if(counter_start >= 28'h0100000 && counter_start <= (28'h0100000+83)) begin
-            screen_controller_address <= counter_start[6:0];
-
-            screen_controller_data <= SCREEN[counter_start[6:2]]; //make each line in SCREEN 4bit wide
-
-            screen_controller_wr_en <= 1;
-         end
+      if(counter_start < 20'h80000) begin //screen in reset mode
+         counter_start <= counter_start + 1;
       end else begin //starts the screen
          RST <= 1;
          screen_controller_enable <= 1;
+         counter_redraw <= counter_redraw + 1;
+
+         //send screen pixels
+         if(counter_redraw >= 23'h040000 && counter_redraw <= (23'h040000+(NB_COLUMNS-1))) begin
+            screen_controller_address <= (counter_redraw[6:0]+shift_value);
+
+            screen_controller_data <= SCREEN[(counter_redraw[6:2])]; //make each line in SCREEN 4bit wide
+            screen_controller_wr_en <= 1;
+         end
+         if(counter_redraw == 23'h2fffff) begin //shift the scren by one pixel a few time per second
+            counter_redraw <= 0;
+            shift_value <= shift_value+1;
+         end
       end
    end
 

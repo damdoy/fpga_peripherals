@@ -126,7 +126,7 @@ module screen_controller(input clk_main, input [6:0] address, input [47:0] data,
             if(current_bloc == 5) begin //6 blocs of 8bits => 48bit of a line
                current_bloc <= 0;
                current_address <= current_address+1;
-               if(current_address >= 83) begin
+               if(current_address >= 83) begin //84 columns
                   current_address <= 0;
                end
             end
