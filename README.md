@@ -5,6 +5,7 @@ List:
 - OV7670 camera single frame capture
 - Nokia 5110 screen
 - UART RX/TX module
+- ST7735 screen controller
 
 ## How to build
 

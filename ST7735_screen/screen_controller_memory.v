@@ -81,6 +81,18 @@ module screen_controller_memory(input wire clk, input wire rd_en, input wire wr_
          ram_data_in_0 = 0;
          ram_data_in_1 = 0;
       end
+
+      //one clock delay
+      if(buf_rd_req == 1) begin
+         //select spram depending on address
+         if(buf_select_spram == 0) begin
+            data_out = ram_data_out_0;
+         end else begin
+            data_out = ram_data_out_1;
+         end
+      end else begin
+         data_out = 0;
+      end
    end
 
    always @(posedge clk)
@@ -90,16 +102,8 @@ module screen_controller_memory(input wire clk, input wire rd_en, input wire wr_
       //keep indication which spram to read from
       buf_select_spram <= rd_addr_y[6];
 
-      valid_out <= 0; //default
+      //will output valid out as a clk delay of rd_en
+      valid_out <= rd_en;
 
-      if(buf_rd_req == 1) begin
-         //select spram depending on address
-         if(buf_select_spram == 0) begin
-            data_out <= ram_data_out_0;
-         end else begin
-            data_out <= ram_data_out_1;
-         end
-         valid_out <= 1;
-      end
    end
 endmodule

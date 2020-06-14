@@ -6,7 +6,9 @@ A green-blue static gradient is drawn on the screen, to display the refresh rate
 on the sides of the screen.
 
 This particular implementation uses a 128x128 pixels ST7735 screen, but a larger screen can be used by changing the constants in the code and
-by incresing the size of the framebuffer memory (within the limit of the FPGA memory), each pixel is 16bit (5R,6G,5B)
+by incresing the size of the framebuffer memory (within the limit of the FPGA memory), each pixel is 16bit (5R,6G,5B).
+
+This project is running on a breakout board with an ice40 ultraplus from lattice, see the root project README for instructions to build.
 
 ![example](ST7735_example.jpg)
 
